@@ -1,0 +1,85 @@
+# $Id: Portfile 22332 2007-02-26 16:49:38Z blair@macports.org $
+
+PortSystem 1.0
+name			subversion-perlbindings
+version			1.4.3
+categories		devel perl
+maintainers		dluke@geeklair.net
+description		Perl bindings for the subversion version control system.
+
+long_description	Subversion is a version control system designed to be \
+			as similar to cvs(1) as possible, while fixing many \
+			outstanding problems with cvs(1). The perl bindings \
+			provide access to subversion API from perl.
+
+homepage		http://subversion.tigris.org/
+master_sites		http://subversion.tigris.org/downloads/
+use_bzip2		yes
+checksums 		md5 de0e792c9804c7bce397d267af5eb30d
+distname		subversion-${version}
+dist_subdir		subversion
+
+test.run		yes
+test.target		check-swig-pl
+
+depends_lib		port:expat port:neon \
+			port:apr port:apr-util \
+			port:db44 port:subversion \
+
+configure.args		--with-berkeley-db=${prefix}/include/db44:${prefix}/lib/db44 \
+			--with-neon=${prefix} --with-apr=${prefix} \
+			--with-apr-util=${prefix} --without-apxs \
+			--mandir=\\\${prefix}/share/man \
+			--disable-neon-version-check \
+
+build.target		swig-pl
+destroot.target		install-swig-pl-lib DESTDIR=${destroot} && \
+        		cd "${worksrcpath}/subversion/bindings/swig/perl/native" &&\
+			make pure_install
+
+#destroot.args		INSTALLDIRS=vendor
+
+pre-configure {		reinplace "s|hardcode_direct=yes|hardcode_direct=no|g" \
+				${worksrcpath}/configure
+			}
+
+post-configure {	reinplace "s|need_relink=yes|need_relink=no|g" \
+				${worksrcpath}/libtool
+			}
+
+variant no_bdb {        depends_lib-delete      port:db44 port:py-bsddb
+                        configure.args-delete   --with-berkeley-db=${prefix}/include/db44:${prefix}/lib/db44
+                        configure.args-append   --without-berkeley-db
+                        }
+
+variant no_neon {       depends_lib-delete      port:neon
+                        configure.args-append   --without-neon
+                        configure.args-delete   --with-neon=${prefix}
+                        }
+
+post-destroot {
+		file delete "${destroot}/${prefix}/lib/libsvn_delta-1.0.0.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_delta-1.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_delta-1.a"
+		file delete "${destroot}/${prefix}/lib/libsvn_delta-1.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_delta-1.la"
+		file delete "${destroot}/${prefix}/lib/libsvn_fs_fs-1.0.0.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_fs_fs-1.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_fs_fs-1.a"
+		file delete "${destroot}/${prefix}/lib/libsvn_fs_fs-1.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_fs_fs-1.la"
+		file delete "${destroot}/${prefix}/lib/libsvn_subr-1.0.0.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_subr-1.0.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_subr-1.a"
+		file delete "${destroot}/${prefix}/lib/libsvn_subr-1.dylib"
+		file delete "${destroot}/${prefix}/lib/libsvn_subr-1.la"
+                foreach packlist [exec find ${destroot} -name .packlist] {
+                        ui_info "Fixing packlist ${packlist}"
+                        reinplace "s|${destroot}||" ${packlist}
+                }
+        }
+
+# 10.3 says -> CarbonCore/MacTypes.h: No such file or directory
+platform darwin 7 {		configure.args-append \
+					--disable-keychain
+				}

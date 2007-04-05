@@ -1,0 +1,40 @@
+# $Id: Portfile 21796 2007-02-08 07:09:39Z markd@macports.org $
+PortSystem	1.0
+
+name			rrdtool
+version			1.2.19
+categories		net
+maintainers		markd@macports.org
+description		Round Robin Database
+long_description	RRDtool is a system to store and display time-series data
+homepage		http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/
+platforms		darwin
+master_sites		http://oss.oetiker.ch/rrdtool/pub/
+checksums		md5 df625d12e0585042a398ff946e32e3e7
+
+depends_lib		\
+			port:tcl \
+			port:zlib \
+			port:libpng \
+			port:freetype \
+			port:libart_lgpl \
+			port:cgilib
+
+configure.args		--prefix=${prefix} \
+			CPPFLAGS="-I${prefix}/include \
+			-I${prefix}/include/libart-2.0 \
+			-I${prefix}/include/freetype2 \
+			-I${prefix}/include/libpng" \
+			CFLAGS="-I${prefix}/include" \
+			LDFLAGS="-L${prefix}/lib" \
+			--enable-perl-site-install \
+			--with-tcllib=${prefix}/lib \
+			--disable-python \
+			--mandir=${prefix}/share/man
+
+build.type		gnu
+
+post-install {
+		ui_msg "\nSee ${prefix}/share/doc/rrdtool for example code\n"
+}
+

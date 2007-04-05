@@ -1,0 +1,46 @@
+--- mzscheme/Makefile.in	2004-12-19 09:38:25.000000000 +0100
++++ mzscheme/Makefile.in	2005-08-09 01:18:36.000000000 +0200
+@@ -153,17 +153,13 @@
+ 
+ # Mac OS ----------------------------------------
+ 
+-MZFW = PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme
++MZFW = libmzscheme.$(FWVERSION).dylib
+ 
+ $(MZFW): libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ $(SPECIALIZINGOBJECTS)
+-	mkdir -p  PLT_MzScheme.framework/Versions/$(FWVERSION)
+-	$(CC) -o $(MZFW) -framework CoreFoundation -dynamiclib -all_load $(SPECIALIZINGOBJECTS) libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ @LDFLAGS@ @LIBS@
+-	rm -f PLT_MzScheme.framework/PLT_MzScheme
+-	ln -s Versions/$(FWVERSION)/PLT_MzScheme PLT_MzScheme.framework/PLT_MzScheme
++	$(CC) -o $(MZFW) -framework CoreFoundation -dynamiclib -all_load $(SPECIALIZINGOBJECTS) libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ @LDFLAGS@ @LIBS@ -install_name $(prefix)/lib/$(MZFW)
+ 
+ mzscheme@OSX@: $(MZFW) main.@LTO@
+-	$(CC) -o mzscheme @PROFFLAGS@ main.@LTO@ -Wl,-headerpad_max_install_names -F. -framework PLT_MzScheme
+- /usr/bin/install_name_tool -change "PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" "@executable_path/PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" mzscheme
++	$(CC) -o mzscheme main.@LTO@ -L. -lmzscheme -lmzgc -ldl -lm
+ 
+ # OSKit ----------------------------------------
+ 
+@@ -266,22 +261,11 @@
+ 
+ osx-install:
+ 	$(MAKE) normal-install
+-	rm -f $(MZFWDIR)/Versions/$(FWVERSION)/PLT_MzScheme
+-	rm -f $(MZFWDIR)/PLT_MzScheme
+-	if [ ! -d @FRAMEWORK_INSTALL_DIR@ ] ; then mkdir @FRAMEWORK_INSTALL_DIR@ ; fi
+-	if [ ! -d $(MZFWDIR) ] ; then mkdir $(MZFWDIR) ; fi
+-	if [ ! -d $(MZFWDIR)/Versions ] ; then mkdir $(MZFWDIR)/Versions ; fi
+-	if [ ! -d $(MZFWDIR)/Versions/$(FWVERSION) ] ; then mkdir $(MZFWDIR)/Versions/$(FWVERSION) ; fi
+-	cp $(MZFW) $(MZFWDIR)/Versions/$(FWVERSION)/
+-	ln -s Versions/$(FWVERSION)/PLT_MzScheme $(MZFWDIR)/
+ 
+ MZFWMMM = PLT_MzScheme.framework/Versions/$(FWVERSION)_3m/PLT_MzScheme
+ 
+ install-3m@OSX@:
+ 	$(MAKE) install-3m-basic
+-	rm -f $(MZFWDIR)/Versions/$(FWVERSION)_3m/PLT_MzScheme
+-	if [ ! -d $(MZFWDIR)/Versions/$(FWVERSION)_3m ] ; then mkdir $(MZFWDIR)/Versions/$(FWVERSION)_3m ; fi
+-	cp $(MZFWMMM) $(MZFWDIR)/Versions/$(FWVERSION)_3m/
+ 
+ WLIBIDIR=`(cd $(prefix); pwd)`/lib
+ WBUILDINFO=$(WLIBIDIR)/buildinfo

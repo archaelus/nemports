@@ -1,0 +1,56 @@
+# $Id: Portfile,v 1.3 2005/12/23 13:11:45 mww Exp $
+
+PortSystem 1.0
+
+name			mzscheme
+version			360
+categories		lang scheme
+platforms		darwin
+maintainers		mww@opendarwin.org
+description		MzScheme is an implementation of the Scheme programming language
+long_description	${description}
+
+homepage		http://www.plt-scheme.org/software/mzscheme/
+set subdir		${version}/mz/
+master_sites	http://download.plt-scheme.org/bundles/${subdir} \
+				ftp://archive.informatik.uni-tuebingen.de/unix/language/plt/${subdir} \
+				http://www.cs.utah.edu/plt/download/${subdir} \
+				ftp://ftp.pasteur.fr/pub/computing/Scheme/plt-scheme/${subdir} \
+				ftp://morpheus.wish.com.mx/pub/plt/${subdir} \
+				ftp://infogroep.be/pub/plt/bundles/${subdir}
+distfiles		mz-${version}-src-unix.tgz
+checksums		md5 4ffdab3e26a5d13148b59ae2cdfa8460
+patchfiles		patch-mzscheme-Makefile.in
+
+depends_lib		port:jpeg \
+				port:libpng
+
+worksrcdir		plt/src
+
+post-patch {
+	reinplace "s|collects|share/mzscheme|g" \
+		${worksrcpath}/mzscheme/src/startup.ss \
+		${worksrcpath}/mzscheme/src/startup.inc
+	reinplace "s|~/Library/PLT Scheme/|${prefix}/share/mzscheme/|g" \
+		${worksrcpath}/mzscheme/src/file.c
+}
+
+configure.env	CFLAGS="-I${prefix}/include" \
+				CPPFLAGS="-I${prefix}/include" \
+				LDFLAGS="-L${prefix}/lib"
+
+destroot.destdir	prefix=${destroot}${prefix}
+post-destroot	{
+	file delete -force ${destroot}${prefix}/install \
+		${destroot}${prefix}/share/man
+	file rename ${destroot}${prefix}/collects \
+		${destroot}${prefix}/share/mzscheme
+	xinstall -m 755 -d ${destroot}${prefix}/share/doc/ \
+		${destroot}${prefix}/share/mzscheme/${version}/
+	system "cd ${destroot}${prefix}/share/mzscheme/${version} && ln -s .. collects"
+	file rename ${destroot}${prefix}/man \
+		${destroot}${prefix}/share/man
+	file rename ${destroot}${prefix}/doc \
+		${destroot}${prefix}/share/doc/mzscheme
+	file delete -force ${destroot}${prefix}/lib/buildinfo
+}

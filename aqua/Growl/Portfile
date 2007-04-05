@@ -1,0 +1,59 @@
+# $Id: Portfile,v 1.9 2005/05/24 06:54:17 mww Exp $
+
+PortSystem 1.0
+
+name			Growl
+version			0.7.6
+categories		aqua
+platforms		darwin
+maintainers		mww@opendarwin.org
+description		global notification system for Mac OS X
+long_description	Growl is a global notification system for Mac OS X. Any \
+				application can send a notification to Growl, which will \
+				display an attractive message on your screen.
+
+homepage		http://growl.info/
+master_sites	${homepage}/files/source/
+distname 		${distname}-src
+checksums		md5 064016b759349360018ded19dde6c0eb
+use_bzip2		yes
+
+worksrcdir		${name}-${version}
+
+pre-extract {
+	file mkdir ${worksrcpath}
+}
+
+use_configure	no
+
+post-build {
+	foreach extra { growlnotify growlctl growlpinger GrowlTunes GrowlMail HardwareGrowler } {
+		system "cd ${worksrcpath}/Extras/${extra} && \
+			MACOSX_DEPLOYMENT_TARGET=10.3 xcodebuild"
+	}
+}
+
+destroot {
+	xinstall -m 755 -d ${destroot}/Applications/DarwinPorts/ \
+		${destroot}/Library/Mail/Bundles/ \
+		${destroot}/Library/PreferencePanes/ \
+		${destroot}${prefix}/share/growl/
+	file copy ${worksrcpath}/build/Growl.prefPane \
+		${destroot}/Library/PreferencePanes/
+	file copy ${worksrcpath}/Extras/GrowlMail/build/GrowlMail.mailbundle \
+		${destroot}/Library/Mail/Bundles
+	file copy ${worksrcpath}/Extras/GrowlTunes/build/GrowlTunes.app \
+		${destroot}/Applications/DarwinPorts/
+	file copy ${worksrcpath}/Extras/HardwareGrowler/build/HardwareGrowler.app \
+		${destroot}/Applications/DarwinPorts/
+	foreach item { growlnotify growlctl growlpinger } {
+		xinstall -m 755 ${worksrcpath}/Extras/${item}/build/${item} \
+			${destroot}${prefix}/bin
+		xinstall -m 644 ${worksrcpath}/Extras/${item}/${item}.1 \
+			${destroot}${prefix}/share/man/man1
+	}
+	xinstall -m 644 ${filespath}/darwinports.png \
+		${destroot}${prefix}/share/growl
+	xinstall -m 755 ${filespath}/iport ${destroot}${prefix}/bin
+	reinplace "s|__PREFIX__|${prefix}|g" ${destroot}${prefix}/bin/iport
+}

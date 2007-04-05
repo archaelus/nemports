@@ -1,0 +1,47 @@
+diff -urN ../../plt-alt/src/mzscheme/Makefile.in ./mzscheme/Makefile.in
+--- ../../plt-alt/src/mzscheme/Makefile.in	2006-06-30 04:06:28.000000000 +1200
++++ ./mzscheme/Makefile.in	2006-08-25 15:48:20.000000000 +1200
+@@ -152,17 +152,13 @@
+ 
+ # Mac OS ----------------------------------------
+ 
+-MZFW = PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme
++MZFW = libmzscheme.$(FWVERSION).dylib
+ 
+ $(MZFW): libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ $(SPECIALIZINGOBJECTS)
+-	mkdir -p  PLT_MzScheme.framework/Versions/$(FWVERSION)
+-	$(CC) -o $(MZFW) -framework CoreFoundation -dynamiclib -all_load $(SPECIALIZINGOBJECTS) libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ @LDFLAGS@ @LIBS@
+-	rm -f PLT_MzScheme.framework/PLT_MzScheme
+-	ln -s Versions/$(FWVERSION)/PLT_MzScheme PLT_MzScheme.framework/PLT_MzScheme
++	$(CC) -o $(MZFW) -framework CoreFoundation -dynamiclib -all_load $(SPECIALIZINGOBJECTS) libmzscheme.@LIBSFX@ libmzgc.@LIBSFX@ @LDFLAGS@ @LIBS@ -install_name $(prefix)/lib/$(MZFW)
+ 
+ mzscheme@OSX@: $(MZFW) main.@LTO@
+-	$(CC) -o mzscheme @PROFFLAGS@ main.@LTO@ -Wl,-headerpad_max_install_names -F. -framework PLT_MzScheme
+-	/usr/bin/install_name_tool -change "PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" "@executable_path/PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" mzscheme
++	$(CC) -o mzscheme @PROFFLAGS@ main.@LTO@ -Wl,-headerpad_max_install_names -L. -lmzscheme -lmzgc -ldl -lm -liconv -framework CoreFoundation
+ 
+ # OSKit ----------------------------------------
+ 
+@@ -302,22 +298,11 @@
+ 
+ osx-install:
+ 	$(MAKE) normal-install
+-	rm -f $(MZFWDIR)/Versions/$(FWVERSION)/PLT_MzScheme
+-	rm -f $(MZFWDIR)/PLT_MzScheme
+-	if [ @FRAMEWORK_REL_INSTALL@ = yes ] ; then rm -rf $(MZFWDIR) ; fi
+-	mkdir -p @FRAMEWORK_INSTALL_DIR@ "$(MZFWDIR)/Versions/$(FWVERSION)"
+-	cp $(MZFW) $(MZFWDIR)/Versions/$(FWVERSION)/
+-	ln -s Versions/$(FWVERSION)/PLT_MzScheme $(MZFWDIR)/
+-	if [ @FRAMEWORK_REL_INSTALL@ = yes ] ; then /usr/bin/install_name_tool -change "@executable_path/PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" "@executable_path/../lib/PLT_MzScheme.framework/Versions/$(FWVERSION)/PLT_MzScheme" "$(bindir)/mzscheme" ; fi
+ 
+ MZFWMMM = PLT_MzScheme.framework/Versions/$(FWVERSION)_3m/PLT_MzScheme
+ 
+ install-3m@OSX@:
+ 	$(MAKE) install-3m-basic
+-	rm -f $(MZFWDIR)/Versions/$(FWVERSION)_3m/PLT_MzScheme
+-	mkdir -p "$(MZFWDIR)/Versions/$(FWVERSION)_3m"
+-	cp $(MZFWMMM) $(MZFWDIR)/Versions/$(FWVERSION)_3m/
+-	if [ @FRAMEWORK_REL_INSTALL@ = yes ] ; then /usr/bin/install_name_tool -change "@executable_path/PLT_MzScheme.framework/Versions/$(FWVERSION)_3m/PLT_MzScheme" "@executable_path/../lib/PLT_MzScheme.framework/Versions/$(FWVERSION)_3m/PLT_MzScheme" "$(bindir)/mzscheme3m" ; fi
+ 
+ unix-cygwin-install:
+ 	$(MAKE) unix-install

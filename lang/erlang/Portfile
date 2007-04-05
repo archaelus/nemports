@@ -1,0 +1,94 @@
+# $Id: Portfile,v 1.17 2006/05/30 20:43:17 gwright Exp $
+
+PortSystem 1.0
+name		erlang
+version		R11B-4
+revision	1
+categories	lang erlang
+maintainers	gwright@opendarwin.org
+platforms	darwin
+description	The Erlang Programming Language
+long_description	\
+		Erlang is a programming language designed at the	\
+		Ericsson Computer Science Laboratory. Open-source	\
+		Erlang is being released to help encourage the spread	\
+		of Erlang outside Ericsson.				\
+									\
+		We are releasing free of charge:			\
+			The entire source code of the current Erlang	\
+			system.						\
+			Extensive libraries of code for building robust	\
+			fault-tolerant distributed applications.	\
+			All with documentation.				\
+									\
+		All the above software has been battle tested in a	\
+		number of Ericsson products, for example the new	\
+		Ericsson ATM switch. 
+
+homepage	http://www.erlang.org/
+master_sites	http://www.erlang.org/download/
+
+distfiles	otp_src_${version}${extract.suffix}		\
+		otp_doc_man_${version}${extract.suffix}		\
+		otp_doc_html_${version}${extract.suffix}
+
+checksums	otp_src_${version}.tar.gz      md5 649e6f057e6996f92c8496161d754d8d \
+		otp_doc_man_${version}.tar.gz  md5 cc041ceebc4a6615073d8d7e88495610 \
+		otp_doc_html_${version}.tar.gz md5 187cd55de8866a278ed963664819404d
+
+extract.only	otp_src_${version}${extract.suffix}
+
+pre-patch	{ file rename ${workpath}/otp_src_${version} ${workpath}/${name}-${version} }
+
+patchfiles	patch-toolbar.erl
+
+configure.args  --prefix=${destroot}${prefix}	\
+		--enable-threads		\
+    --enable-kernel-poll            \
+    --enable-hipe			\
+    --disable-smp-support
+
+variant smp	{
+		configure.args-delete	--disable-smp-support
+}
+
+variant hipeless {
+		configure.args-delete	--enable-hipe
+}
+
+depends_build	bin:gawk:gawk
+
+post-destroot	{
+	cd ${destroot}${prefix}/lib/erlang
+        system "tar -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
+	system "tar -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
+
+        set erts_dir   erts-5.5.3
+
+        reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/erl
+        reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/start
+        reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/${erts_dir}/bin/erl
+        reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/${erts_dir}/bin/start
+
+        file delete ${destroot}${prefix}/bin/ear
+        file delete ${destroot}${prefix}/bin/ecc
+        file delete ${destroot}${prefix}/bin/elink
+        file delete ${destroot}${prefix}/bin/erl
+        file delete ${destroot}${prefix}/bin/erlc
+        file delete ${destroot}${prefix}/bin/escript
+
+        cd ${destroot}${prefix}/bin
+
+        system "ln -s ../lib/erlang/bin/ear     ear"
+        system "ln -s ../lib/erlang/bin/ecc     ecc"
+        system "ln -s ../lib/erlang/bin/elink   elink"
+        system "ln -s ../lib/erlang/bin/erl     erl"
+        system "ln -s ../lib/erlang/bin/erlc    erlc"
+        system "ln -s ../lib/erlang/bin/escript escript"
+
+        file delete ${destroot}${prefix}/lib/erlang/bin/epmd
+
+        cd ${destroot}${prefix}/lib/erlang/bin
+
+        system "ln -s ../${erts_dir}/bin/epmd      epmd"
+}
