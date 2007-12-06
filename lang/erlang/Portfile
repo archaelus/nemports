@@ -1,11 +1,10 @@
-# $Id: Portfile,v 1.17 2006/05/30 20:43:17 gwright Exp $
+# $Id: Portfile 28835 2007-09-10 02:01:57Z bfulgham@macports.org $
 
 PortSystem 1.0
 name		erlang
-version		R11B-4
-revision	1
+version		R12B-0
 categories	lang erlang
-maintainers	gwright@opendarwin.org
+maintainers	bfulgham@macports.org
 platforms	darwin
 description	The Erlang Programming Language
 long_description	\
@@ -26,44 +25,58 @@ long_description	\
 		Ericsson ATM switch. 
 
 homepage	http://www.erlang.org/
-master_sites	http://www.erlang.org/download/
+master_sites	http://www3.erlang.org/download/ http://www.erlang.org/download/
 
 distfiles	otp_src_${version}${extract.suffix}		\
 		otp_doc_man_${version}${extract.suffix}		\
 		otp_doc_html_${version}${extract.suffix}
 
-checksums	otp_src_${version}.tar.gz      md5 649e6f057e6996f92c8496161d754d8d \
-		otp_doc_man_${version}.tar.gz  md5 cc041ceebc4a6615073d8d7e88495610 \
-		otp_doc_html_${version}.tar.gz md5 187cd55de8866a278ed963664819404d
+checksums	otp_src_${version}.tar.gz      md5 54cd5a83697c515f571e44d4ea99c8d3 \
+		otp_doc_man_${version}.tar.gz  md5 aa3a12a16e03d1aadec40e265f51e7c6 \
+		otp_doc_html_${version}.tar.gz md5 c76893c55eab2857d68611c2962b8dc8
 
 extract.only	otp_src_${version}${extract.suffix}
 
 pre-patch	{ file rename ${workpath}/otp_src_${version} ${workpath}/${name}-${version} }
 
-patchfiles	patch-toolbar.erl
+#patchfiles	patch-toolbar.erl patch-erts_emulator_hipe_hipe_x86_signal.c patch-erts_emulator_sys_unix_sys_float.c patch-erts_configure.in patch-erts_configure patch-odbc
+patchfiles	patch-nem_macports
 
 configure.args  --prefix=${destroot}${prefix}	\
 		--enable-threads		\
-    --enable-kernel-poll            \
-    --enable-hipe			\
-    --disable-smp-support
+                --enable-kernel-poll            \
+		--enable-hipe			\
+		--disable-smp-support           \
+                --with-ssl=${prefix}            \
+                --with-ssl-zlib=${prefix}
 
 variant smp	{
 		configure.args-delete	--disable-smp-support
 }
 
-variant hipeless {
-		configure.args-delete	--enable-hipe
+variant gd      {
+        configure.args-append      --with-gd=${prefix}
+        depends_build-append       port:gd2
+        patchfiles-append          patch-percept
 }
 
-depends_build	bin:gawk:gawk
+platform i386 {
+   pre-configure {
+      file copy ${filespath}/mach_override.h ${workpath}/${name}-${version}/erts/emulator/hipe
+      file copy ${filespath}/mach_override.c ${workpath}/${name}-${version}/erts/emulator/hipe
+   }
+}
+
+
+
+depends_build	port:gawk port:openssl
+depends_run	port:tk
 
 post-destroot	{
-	cd ${destroot}${prefix}/lib/erlang
-        system "tar -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
-	system "tar -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
+        system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
+	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
 
-        set erts_dir   erts-5.5.3
+        set erts_dir   erts-5.6
 
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/erl
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/start
@@ -77,18 +90,16 @@ post-destroot	{
         file delete ${destroot}${prefix}/bin/erlc
         file delete ${destroot}${prefix}/bin/escript
 
-        cd ${destroot}${prefix}/bin
-
-        system "ln -s ../lib/erlang/bin/ear     ear"
-        system "ln -s ../lib/erlang/bin/ecc     ecc"
-        system "ln -s ../lib/erlang/bin/elink   elink"
-        system "ln -s ../lib/erlang/bin/erl     erl"
-        system "ln -s ../lib/erlang/bin/erlc    erlc"
-        system "ln -s ../lib/erlang/bin/escript escript"
+        system "ln -s ../lib/erlang/bin/ear     ${destroot}${prefix}/bin/ear"
+        system "ln -s ../lib/erlang/bin/ecc     ${destroot}${prefix}/bin/ecc"
+        system "ln -s ../lib/erlang/bin/elink   ${destroot}${prefix}/bin/elink"
+        system "ln -s ../lib/erlang/bin/erl     ${destroot}${prefix}/bin/erl"
+        system "ln -s ../lib/erlang/bin/erlc    ${destroot}${prefix}/bin/erlc"
+        system "ln -s ../lib/erlang/bin/escript ${destroot}${prefix}/bin/escript"
 
         file delete ${destroot}${prefix}/lib/erlang/bin/epmd
 
-        cd ${destroot}${prefix}/lib/erlang/bin
-
-        system "ln -s ../${erts_dir}/bin/epmd      epmd"
+        system "ln -s ../${erts_dir}/bin/epmd ${destroot}${prefix}/lib/erlang/bin/epmd"
 }
+
+#bugs: odbc

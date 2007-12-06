@@ -1,0 +1,36 @@
+diff --git a/lib/percept/c_src/Makefile.in b/lib/percept/c_src/Makefile.in
+index 4293bc2..84023f2 100644
+--- a/lib/percept/c_src/Makefile.in
++++ lib/percept/c_src/Makefile.in
+@@ -94,9 +94,13 @@ else
+ ifeq ($(findstring vxworks,$(TARGET)),vxworks)
+ SOLIBS = $(LIBDIR)/egd_drv.eld
+ else
++ifeq ($(findstring darwin,$(TARGET)),darwin)
++SOLIBS = $(LIBDIR)/egd_drv.dylib
++else
+ SOLIBS = $(LIBDIR)/egd_drv.so
+ endif
+ endif
++endif
+ 
+ 
+ # ----------------------------------------------------
+@@ -113,12 +117,16 @@ $(BINDIR):
+ 
+ $(OBJDIR)/%.o: %.c
+ 	$(INSTALL_DIR) $(OBJDIR)
+-	$(CC) -c -o $@ $(ALL_CFLAGS) $(GD_INCLUDE) $<
++	$(CC) -c -o $@ $(ALL_CFLAGS) -I$(GD_INCLUDE) $<
+ 
+ $(LIBDIR)/egd_drv.so: $(EGD_DRV_OBJS)
+ 	$(INSTALL_DIR) $(LIBDIR)
+ 	$(LD) $(CC_R_OPT) $(LDFLAGS) -o $@ $^ $(LIBS) $(GD_LINK_LIB)
+ 
++$(LIBDIR)/egd_drv.dylib: $(EGD_DRV_OBJS)
++	$(INSTALL_DIR) $(LIBDIR)
++	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS) $(GD_LINK_LIB)
++
+ $(LIBDIR)/egd_drv.dll: $(EGD_DRV_OBJS)
+ 	$(INSTALL_DIR) $(LIBDIR)
+ 	$(LD) $(CC_R_OPT) $(LDFLAGS) -o $@ $^ $(LIBS) $(GD_LINK_LIB)
