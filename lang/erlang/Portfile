@@ -2,7 +2,8 @@
 
 PortSystem 1.0
 name		erlang
-version		R12B-0
+version		R12B-1
+#revision	1
 categories	lang erlang
 maintainers	bfulgham@macports.org
 platforms	darwin
@@ -31,16 +32,15 @@ distfiles	otp_src_${version}${extract.suffix}		\
 		otp_doc_man_${version}${extract.suffix}		\
 		otp_doc_html_${version}${extract.suffix}
 
-checksums	otp_src_${version}.tar.gz      md5 54cd5a83697c515f571e44d4ea99c8d3 \
-		otp_doc_man_${version}.tar.gz  md5 aa3a12a16e03d1aadec40e265f51e7c6 \
-		otp_doc_html_${version}.tar.gz md5 c76893c55eab2857d68611c2962b8dc8
+checksums	otp_src_${version}.tar.gz      md5 6de3630b446e9c2150edfe01e383c917 \
+		otp_doc_man_${version}.tar.gz  md5 96da62bcfb40e5d3ec2945bb2b050024 \
+		otp_doc_html_${version}.tar.gz md5 3dd8aee17fcbd3e5fda7313208fce6ac
 
 extract.only	otp_src_${version}${extract.suffix}
 
 pre-patch	{ file rename ${workpath}/otp_src_${version} ${workpath}/${name}-${version} }
 
-#patchfiles	patch-toolbar.erl patch-erts_emulator_hipe_hipe_x86_signal.c patch-erts_emulator_sys_unix_sys_float.c patch-erts_configure.in patch-erts_configure patch-odbc
-patchfiles	patch-nem_macports
+patchfiles	patch-odbc
 
 configure.args  --prefix=${destroot}${prefix}	\
 		--enable-threads		\
@@ -51,13 +51,17 @@ configure.args  --prefix=${destroot}${prefix}	\
                 --with-ssl-zlib=${prefix}
 
 variant smp	{
-		configure.args-delete	--disable-smp-support
+	configure.args-delete	--disable-smp-support
 }
 
 variant gd      {
         configure.args-append      --with-gd=${prefix}
         depends_build-append       port:gd2
         patchfiles-append          patch-percept
+}
+
+variant gproc	{
+	patchfiles-append	patch-gproc
 }
 
 platform i386 {
