@@ -2,7 +2,7 @@
 
 PortSystem 1.0
 name		erlang
-version		R12B-1
+version		R12B-2
 #revision	1
 categories	lang erlang
 maintainers	bfulgham@macports.org
@@ -32,9 +32,9 @@ distfiles	otp_src_${version}${extract.suffix}		\
 		otp_doc_man_${version}${extract.suffix}		\
 		otp_doc_html_${version}${extract.suffix}
 
-checksums	otp_src_${version}.tar.gz      md5 6de3630b446e9c2150edfe01e383c917 \
-		otp_doc_man_${version}.tar.gz  md5 96da62bcfb40e5d3ec2945bb2b050024 \
-		otp_doc_html_${version}.tar.gz md5 3dd8aee17fcbd3e5fda7313208fce6ac
+checksums	otp_src_${version}.tar.gz      sha1 a38adf0498a6d0f5038899d9f4a8accc935e7ffd \
+		otp_doc_man_${version}.tar.gz  sha1 c32be18cc121412af97d948e1262a185206cadcb \
+		otp_doc_html_${version}.tar.gz sha1 9fbb1f8e514ab340fff437e794243b4d530ed682
 
 extract.only	otp_src_${version}${extract.suffix}
 
@@ -71,16 +71,13 @@ platform i386 {
    }
 }
 
-
-
 depends_build	port:gawk port:openssl
-depends_run	port:tk
 
 post-destroot	{
         system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
 	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
 
-        set erts_dir   erts-5.6
+        set erts_dir   erts-5.6.2
 
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/erl
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/start

@@ -1,5 +1,5 @@
 diff --git a/lib/odbc/configure b/lib/odbc/configure
-index ba61083..5cae0eb 100755
+index ba61083..85713f2 100755
 --- a/lib/odbc/configure
 +++ lib/odbc/configure
 @@ -1,25 +1,54 @@
@@ -1125,13 +1125,13 @@ index ba61083..5cae0eb 100755
 -if test ! -r $srcdir/$ac_unique_file; then
 -  if test "$ac_srcdir_defaulted" = yes; then
 -    { echo "$as_me: error: cannot find sources ($ac_unique_file) in $ac_confdir or .." >&2
--   { (exit 1); exit 1; }; }
--  else
--    { echo "$as_me: error: cannot find sources ($ac_unique_file) in $srcdir" >&2
 +if test ! -r "$srcdir/$ac_unique_file"; then
 +  test "$ac_srcdir_defaulted" = yes && srcdir="$ac_confdir or .."
 +  { echo "$as_me: error: cannot find sources ($ac_unique_file) in $srcdir" >&2
     { (exit 1); exit 1; }; }
+-  else
+-    { echo "$as_me: error: cannot find sources ($ac_unique_file) in $srcdir" >&2
+-   { (exit 1); exit 1; }; }
 -  fi
  fi
 -(cd $srcdir && test -r ./$ac_unique_file) 2>/dev/null ||
@@ -1307,7 +1307,13 @@ index ba61083..5cae0eb 100755
 -  [\\/]* | ?:[\\/]* ) ac_abs_builddir="$ac_dir";;
 -  *) ac_abs_builddir=`pwd`/"$ac_dir";;
 -  esac;;
--esac
++    ac_top_srcdir=$srcdir
++    ac_abs_top_srcdir=$srcdir ;;
++  *) # Relative name.
++    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
++    ac_top_srcdir=$ac_top_build_prefix$srcdir
++    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+ esac
 -case $ac_abs_builddir in
 -.) ac_abs_top_builddir=${ac_top_builddir}.;;
 -*)
@@ -1334,13 +1340,7 @@ index ba61083..5cae0eb 100755
 -  [\\/]* | ?:[\\/]* ) ac_abs_top_srcdir=$ac_top_srcdir;;
 -  *) ac_abs_top_srcdir=$ac_abs_builddir/$ac_top_srcdir;;
 -  esac;;
-+    ac_top_srcdir=$srcdir
-+    ac_abs_top_srcdir=$srcdir ;;
-+  *) # Relative name.
-+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-+    ac_top_srcdir=$ac_top_build_prefix$srcdir
-+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
- esac
+-esac
 -
 -    cd $ac_dir
 -    # Check for guested configure; otherwise get Cygnus style configure.
@@ -2662,14 +2662,14 @@ index ba61083..5cae0eb 100755
  
 -ac_cv_prog_cc_g=no
 +
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
  fi
 -rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-+
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-+fi
-+
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-+fi
 +
 +rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 +   ac_c_werror_flag=$ac_save_c_werror_flag
@@ -2944,11 +2944,11 @@ index ba61083..5cae0eb 100755
 -  echo $ac_declaration      >>confdefs.h
 -  echo '#endif'             >>confdefs.h
 -fi
- 
+-
 -else
 -  echo "$as_me: failed program was:" >&5
 -sed 's/^/| /' conftest.$ac_ext >&5
--
+ 
 -fi
 -rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
  ac_ext=c
@@ -3761,17 +3761,17 @@ index ba61083..5cae0eb 100755
 +{ echo "$as_me:$LINENO: checking for grep that handles long lines and -e" >&5
 +echo $ECHO_N "checking for grep that handles long lines and -e... $ECHO_C" >&6; }
 +if test "${ac_cv_path_GREP+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  # Extract the first word of "grep ggrep" to use in msg output
++if test -z "$GREP"; then
++set dummy grep ggrep; ac_prog_name=$2
++if test "${ac_cv_path_GREP+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
 -  if echo a | (grep -E '(a|b)') >/dev/null 2>&1
 -    then ac_cv_prog_egrep='grep -E'
 -    else ac_cv_prog_egrep='egrep'
-+  # Extract the first word of "grep ggrep" to use in msg output
-+if test -z "$GREP"; then
-+set dummy grep ggrep; ac_prog_name=$2
-+if test "${ac_cv_path_GREP+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+else
 +  ac_path_GREP_found=false
 +# Loop through the user's path and test for each of PROGNAME-LIST
 +as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -3831,9 +3831,14 @@ index ba61083..5cae0eb 100755
 +
 +else
 +  ac_cv_path_GREP=$GREP
-+fi
-+
-+
+ fi
+-echo "$as_me:$LINENO: result: $ac_cv_prog_egrep" >&5
+-echo "${ECHO_T}$ac_cv_prog_egrep" >&6
+- EGREP=$ac_cv_prog_egrep
+ 
+ 
+-echo "$as_me:$LINENO: checking for ANSI C header files" >&5
+-echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
 +fi
 +{ echo "$as_me:$LINENO: result: $ac_cv_path_GREP" >&5
 +echo "${ECHO_T}$ac_cv_path_GREP" >&6; }
@@ -3913,14 +3918,9 @@ index ba61083..5cae0eb 100755
 +
 +else
 +  ac_cv_path_EGREP=$EGREP
- fi
--echo "$as_me:$LINENO: result: $ac_cv_prog_egrep" >&5
--echo "${ECHO_T}$ac_cv_prog_egrep" >&6
-- EGREP=$ac_cv_prog_egrep
- 
- 
--echo "$as_me:$LINENO: checking for ANSI C header files" >&5
--echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
++fi
++
++
 +   fi
 +fi
 +{ echo "$as_me:$LINENO: result: $ac_cv_path_EGREP" >&5
@@ -4941,25 +4941,92 @@ index ba61083..5cae0eb 100755
  if test `eval echo '${'$as_ac_var'}'` = yes; then
    cat >>confdefs.h <<_ACEOF
  #define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
-@@ -4115,11 +4618,84 @@ have_odbc_lib=no
+@@ -4115,11 +4618,152 @@ have_odbc_lib=no
  
  
      case $host_os in
-+        macos* | darwin* )
-+		if test ! -d "$with_odbc"; then
-+		    ODBC_LIB=""
-+		    ODBC_INCLUDE=""
-+		else
-+		    ODBC_LIB=-L"$with_odbc/lib"
-+		    ODBC_INCLUDE="-I$with_odbc/include"
-+		fi
-+                { echo "$as_me:$LINENO: checking for SQLAllocHandle in -liodbc" >&5
++        darwin*)
++                TARGET_FLAGS="-DUNIX"
++                { echo "$as_me:$LINENO: checking for pthread_create in -lpthread" >&5
++echo $ECHO_N "checking for pthread_create in -lpthread... $ECHO_C" >&6; }
++if test "${ac_cv_lib_pthread_pthread_create+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lpthread  $LIBS"
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char pthread_create ();
++int
++main ()
++{
++return pthread_create ();
++  ;
++  return 0;
++}
++_ACEOF
++rm -f conftest.$ac_objext conftest$ac_exeext
++if { (ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_link") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext &&
++       $as_test_x conftest$ac_exeext; then
++  ac_cv_lib_pthread_pthread_create=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_cv_lib_pthread_pthread_create=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
++      conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_lib_pthread_pthread_create" >&5
++echo "${ECHO_T}$ac_cv_lib_pthread_pthread_create" >&6; }
++if test $ac_cv_lib_pthread_pthread_create = yes; then
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBPTHREAD 1
++_ACEOF
++
++			     LIBS="$LIBS -lpthread"
++			     have_pthread_lib=yes
++fi
++
++                ODBC_LIB=-L"/usr/lib"
++                ODBC_INCLUDE="-I/usr/lib/include"
++	        { echo "$as_me:$LINENO: checking for SQLAllocHandle in -liodbc" >&5
 +echo $ECHO_N "checking for SQLAllocHandle in -liodbc... $ECHO_C" >&6; }
 +if test "${ac_cv_lib_iodbc_SQLAllocHandle+set}" = set; then
 +  echo $ECHO_N "(cached) $ECHO_C" >&6
 +else
 +  ac_check_lib_save_LIBS=$LIBS
-+LIBS="-liodbc $ODBC_LIB $LIBS"
++LIBS="-liodbc  $LIBS"
 +cat >conftest.$ac_ext <<_ACEOF
 +/* confdefs.h.  */
 +_ACEOF
@@ -5017,7 +5084,8 @@ index ba61083..5cae0eb 100755
 +if test $ac_cv_lib_iodbc_SQLAllocHandle = yes; then
 +  ODBC_LIB="$ODBC_LIB -liodbc" odbc_lib_link_sucess=yes
 +fi
-+;;
++
++            ;;
          win32|cygwin)
  		TARGET_FLAGS="-DWIN32"
  
@@ -5028,7 +5096,7 @@ index ba61083..5cae0eb 100755
  if test "${ac_cv_lib_ws2_32_main+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
-@@ -4136,46 +4712,43 @@ cat >>conftest.$ac_ext <<_ACEOF
+@@ -4136,46 +4780,43 @@ cat >>conftest.$ac_ext <<_ACEOF
  int
  main ()
  {
@@ -5093,7 +5161,7 @@ index ba61083..5cae0eb 100755
  if test $ac_cv_lib_ws2_32_main = yes; then
    cat >>confdefs.h <<_ACEOF
  #define HAVE_LIBWS2_32 1
-@@ -4192,8 +4765,8 @@ fi
+@@ -4192,8 +4833,8 @@ fi
  		    ODBC_LIB=-L"$with_odbc/lib"
  		    ODBC_INCLUDE="-I$with_odbc/include"
  		fi
@@ -5104,7 +5172,7 @@ index ba61083..5cae0eb 100755
  if test "${ac_cv_lib_odbc32_main+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
-@@ -4210,46 +4783,43 @@ cat >>conftest.$ac_ext <<_ACEOF
+@@ -4210,46 +4851,43 @@ cat >>conftest.$ac_ext <<_ACEOF
  int
  main ()
  {
@@ -5169,7 +5237,7 @@ index ba61083..5cae0eb 100755
  if test $ac_cv_lib_odbc32_main = yes; then
    ODBC_LIB="$ODBC_LIB -lodbc32" odbc_lib_link_sucess=yes
  fi
-@@ -4257,8 +4827,8 @@ fi
+@@ -4257,8 +4895,8 @@ fi
  	    ;;
  	    *)
  	       TARGET_FLAGS="-DUNIX"
@@ -5180,7 +5248,7 @@ index ba61083..5cae0eb 100755
  if test "${ac_cv_lib_pthread_pthread_create+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
-@@ -4271,56 +4841,53 @@ cat confdefs.h >>conftest.$ac_ext
+@@ -4271,56 +4909,53 @@ cat confdefs.h >>conftest.$ac_ext
  cat >>conftest.$ac_ext <<_ACEOF
  /* end confdefs.h.  */
  
@@ -5258,7 +5326,7 @@ index ba61083..5cae0eb 100755
  if test $ac_cv_lib_pthread_pthread_create = yes; then
  
  cat >>confdefs.h <<\_ACEOF
-@@ -4332,8 +4899,8 @@ _ACEOF
+@@ -4332,8 +4967,8 @@ _ACEOF
  fi
  
  	       if test ! -d "$with_odbc"; then
@@ -5269,7 +5337,7 @@ index ba61083..5cae0eb 100755
  	         for dir in /usr/local/odbc /usr/local /usr/odbc \
  		     /usr /opt/local/pgm/odbc /usr/local/pgm/odbc
  		 do
-@@ -4345,16 +4912,16 @@ echo $ECHO_N "checking for odbc in standard locations... $ECHO_C" >&6
+@@ -4345,16 +4980,16 @@ echo $ECHO_N "checking for odbc in standard locations... $ECHO_C" >&6
  		    fi
  	         done
                   if  test "x$is_odbc_std_location" != "xyes"; then
@@ -5292,7 +5360,7 @@ index ba61083..5cae0eb 100755
  if test "${ac_cv_lib_odbc_SQLAllocHandle+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
-@@ -4367,56 +4934,53 @@ cat confdefs.h >>conftest.$ac_ext
+@@ -4367,56 +5002,53 @@ cat confdefs.h >>conftest.$ac_ext
  cat >>conftest.$ac_ext <<_ACEOF
  /* end confdefs.h.  */
  
@@ -5370,7 +5438,7 @@ index ba61083..5cae0eb 100755
  if test $ac_cv_lib_odbc_SQLAllocHandle = yes; then
    ODBC_LIB="$ODBC_LIB -lodbc" odbc_lib_link_sucess=yes
  fi
-@@ -4425,8 +4989,8 @@ fi
+@@ -4425,8 +5057,8 @@ fi
                else
                  ODBC_LIB=-L"$with_odbc/lib"
                  ODBC_INCLUDE="-I$with_odbc/include"
@@ -5381,7 +5449,7 @@ index ba61083..5cae0eb 100755
  if test "${ac_cv_lib_odbc_SQLAllocHandle+set}" = set; then
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
-@@ -4439,56 +5003,53 @@ cat confdefs.h >>conftest.$ac_ext
+@@ -4439,56 +5071,53 @@ cat confdefs.h >>conftest.$ac_ext
  cat >>conftest.$ac_ext <<_ACEOF
  /* end confdefs.h.  */
  
@@ -5459,7 +5527,7 @@ index ba61083..5cae0eb 100755
  if test $ac_cv_lib_odbc_SQLAllocHandle = yes; then
    ODBC_LIB="$ODBC_LIB -lodbc" odbc_lib_link_sucess=yes
  fi
-@@ -4506,70 +5067,56 @@ fi
+@@ -4506,70 +5135,56 @@ fi
  
  
  
@@ -5559,7 +5627,7 @@ index ba61083..5cae0eb 100755
  done
  LIBOBJS=$ac_libobjs
  
-@@ -4600,17 +5147,45 @@ cat >>$CONFIG_STATUS <<\_ACEOF
+@@ -4600,17 +5215,45 @@ cat >>$CONFIG_STATUS <<\_ACEOF
  ## M4sh Initialization.  ##
  ## --------------------- ##
  
@@ -5609,7 +5677,7 @@ index ba61083..5cae0eb 100755
  
  # Support unset when possible.
  if ( (MAIL=60; unset MAIL) || exit) >/dev/null 2>&1; then
-@@ -4620,8 +5195,43 @@ else
+@@ -4620,8 +5263,43 @@ else
  fi
  
  
@@ -5654,7 +5722,7 @@ index ba61083..5cae0eb 100755
  PS1='$ '
  PS2='> '
  PS4='+ '
-@@ -4635,18 +5245,19 @@ do
+@@ -4635,18 +5313,19 @@ do
    if (set +x; test -z "`(eval $as_var=C; export $as_var) 2>&1`"); then
      eval $as_var=C; export $as_var
    else
@@ -5677,7 +5745,7 @@ index ba61083..5cae0eb 100755
    as_basename=basename
  else
    as_basename=false
-@@ -4654,159 +5265,120 @@ fi
+@@ -4654,159 +5333,120 @@ fi
  
  
  # Name of the executable.
@@ -5693,6 +5761,7 @@ index ba61083..5cae0eb 100755
 -  	  /^X\/\(\/\/\)$/{ s//\1/; q; }
 -  	  /^X\/\(\/\).*/{ s//\1/; q; }
 -  	  s/.*/./; q'`
+-
 +    sed '/^.*\/\([^/][^/]*\)\/*$/{
 +	    s//\1/
 +	    q
@@ -5707,7 +5776,6 @@ index ba61083..5cae0eb 100755
 +	  }
 +	  s/.*/./; q'`
  
--
 -# PATH needs CR, and LINENO needs CR and PATH.
 -# Avoid depending upon Character Ranges.
 -as_cr_letters='abcdefghijklmnopqrstuvwxyz'
@@ -5715,7 +5783,9 @@ index ba61083..5cae0eb 100755
 -as_cr_Letters=$as_cr_letters$as_cr_LETTERS
 -as_cr_digits='0123456789'
 -as_cr_alnum=$as_cr_Letters$as_cr_digits
--
++# CDPATH.
++$as_unset CDPATH
+ 
 -# The user is always right.
 -if test "${PATH_SEPARATOR+set}" != set; then
 -  echo "#! /bin/sh" >conf$$.sh
@@ -5728,14 +5798,12 @@ index ba61083..5cae0eb 100755
 -  fi
 -  rm -f conf$$.sh
 -fi
-+# CDPATH.
-+$as_unset CDPATH
  
  
--  as_lineno_1=$LINENO
--  as_lineno_2=$LINENO
+   as_lineno_1=$LINENO
+   as_lineno_2=$LINENO
 -  as_lineno_3=`(expr $as_lineno_1 + 1) 2>/dev/null`
--  test "x$as_lineno_1" != "x$as_lineno_2" &&
+   test "x$as_lineno_1" != "x$as_lineno_2" &&
 -  test "x$as_lineno_3"  = "x$as_lineno_2"  || {
 -  # Find who we are.  Look in the path if we contain no path at all
 -  # relative or not.
@@ -5748,7 +5816,7 @@ index ba61083..5cae0eb 100755
 -  test -z "$as_dir" && as_dir=.
 -  test -r "$as_dir/$0" && as_myself=$as_dir/$0 && break
 -done
- 
+-
 -       ;;
 -  esac
 -  # We did not find ourselves, most probably we were run as `sh COMMAND'
@@ -5772,10 +5840,10 @@ index ba61083..5cae0eb 100755
 -	 case $as_dir in
 -	 /*)
 -	   if ("$as_dir/$as_base" -c '
-   as_lineno_1=$LINENO
-   as_lineno_2=$LINENO
+-  as_lineno_1=$LINENO
+-  as_lineno_2=$LINENO
 -  as_lineno_3=`(expr $as_lineno_1 + 1) 2>/dev/null`
-   test "x$as_lineno_1" != "x$as_lineno_2" &&
+-  test "x$as_lineno_1" != "x$as_lineno_2" &&
 -  test "x$as_lineno_3"  = "x$as_lineno_2" ') 2>/dev/null; then
 -	     $as_unset BASH_ENV || test "${BASH_ENV+set}" != set || { BASH_ENV=; export BASH_ENV; }
 -	     $as_unset ENV || test "${ENV+set}" != set || { ENV=; export ENV; }
@@ -5908,7 +5976,7 @@ index ba61083..5cae0eb 100755
  
  if mkdir -p . 2>/dev/null; then
    as_mkdir_p=:
-@@ -4815,7 +5387,28 @@ else
+@@ -4815,7 +5455,28 @@ else
    as_mkdir_p=false
  fi
  
@@ -5938,7 +6006,7 @@ index ba61083..5cae0eb 100755
  
  # Sed expression to map a string onto a valid CPP name.
  as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
-@@ -4824,31 +5417,14 @@ as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
+@@ -4824,31 +5485,14 @@ as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
  as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr_alnum]%_%g'"
  
  
@@ -5974,7 +6042,7 @@ index ba61083..5cae0eb 100755
  
    CONFIG_FILES    = $CONFIG_FILES
    CONFIG_HEADERS  = $CONFIG_HEADERS
-@@ -4856,30 +5432,18 @@ generated by GNU Autoconf 2.59.  Invocation command line was
+@@ -4856,30 +5500,18 @@ generated by GNU Autoconf 2.59.  Invocation command line was
    CONFIG_COMMANDS = $CONFIG_COMMANDS
    $ $0 $@
  
@@ -6011,7 +6079,7 @@ index ba61083..5cae0eb 100755
  ac_cs_usage="\
  \`$as_me' instantiates files from templates according to the
  current configuration.
-@@ -4887,7 +5451,7 @@ current configuration.
+@@ -4887,7 +5519,7 @@ current configuration.
  Usage: $0 [OPTIONS] [FILE]...
  
    -h, --help       print this help, then exit
@@ -6020,7 +6088,7 @@ index ba61083..5cae0eb 100755
    -q, --quiet      do not print progress messages
    -d, --debug      don't remove temporary files
        --recheck    update $as_me by reconfiguring in the same conditions
-@@ -4898,18 +5462,20 @@ Configuration files:
+@@ -4898,18 +5530,20 @@ Configuration files:
  $config_files
  
  Report bugs to <bug-autoconf@gnu.org>."
@@ -6046,7 +6114,7 @@ index ba61083..5cae0eb 100755
  _ACEOF
  
  cat >>$CONFIG_STATUS <<\_ACEOF
-@@ -4920,60 +5486,42 @@ while test $# != 0
+@@ -4920,60 +5554,42 @@ while test $# != 0
  do
    case $1 in
    --*=*)
@@ -6119,7 +6187,7 @@ index ba61083..5cae0eb 100755
  
    esac
    shift
-@@ -4989,28 +5537,42 @@ fi
+@@ -4989,28 +5605,42 @@ fi
  _ACEOF
  cat >>$CONFIG_STATUS <<_ACEOF
  if \$ac_cs_recheck; then
@@ -6170,7 +6238,7 @@ index ba61083..5cae0eb 100755
  # If the user did not use the arguments to specify the items to instantiate,
  # then the envvar interface is used.  Set only those that are not.
  # We use the long form for the default assignment because of an extremely
-@@ -5020,334 +5582,413 @@ if $ac_need_defaults; then
+@@ -5020,334 +5650,413 @@ if $ac_need_defaults; then
  fi
  
  # Have a temporary directory for convenience.  Make it in the build tree
@@ -6401,17 +6469,17 @@ index ba61083..5cae0eb 100755
    fi
 -fi # test -n "$CONFIG_FILES"
 +done
-+
+ 
 +ac_eof=`sed -n '/^CEOF[0-9]*$/s/CEOF/0/p' conf$$subs.sed`
 +if test -n "$ac_eof"; then
 +  ac_eof=`echo "$ac_eof" | sort -nru | sed 1q`
 +  ac_eof=`expr $ac_eof + 1`
 +fi
- 
++
 +cat >>$CONFIG_STATUS <<_ACEOF
 +cat >"\$tmp/subs-1.sed" <<\CEOF$ac_eof
 +/@[a-zA-Z_][a-zA-Z_0-9]*@/!b end
- _ACEOF
++_ACEOF
 +sed '
 +s/[,\\&]/\\&/g; s/@/@|#_!!_#|/g
 +s/^/s,@/; s/!/@,|#_!!_#|/
@@ -6426,7 +6494,7 @@ index ba61083..5cae0eb 100755
 +:end
 +s/|#_!!_#|//g
 +CEOF$ac_eof
-+_ACEOF
+ _ACEOF
 +
 +
 +# VPATH may cause trouble with some makes, so we remove $(srcdir),
@@ -6849,27 +6917,23 @@ index ba61083..5cae0eb 100755
  { (exit 0); exit 0; }
  _ACEOF
 diff --git a/lib/odbc/configure.in b/lib/odbc/configure.in
-index 114f86a..d1a509e 100644
+index 114f86a..d1df895 100644
 --- a/lib/odbc/configure.in
 +++ lib/odbc/configure.in
-@@ -136,6 +136,20 @@ have_odbc_lib=no
+@@ -136,6 +136,16 @@ have_odbc_lib=no
  	
  AC_SUBST(TARGET_FLAGS)
      case $host_os in
-+        macos* | darwin* )
-+		if test ! -d "$with_odbc"; then				
-+		    ODBC_LIB=""   
-+		    ODBC_INCLUDE=""
-+		else
-+		    ODBC_LIB=-L"$with_odbc/lib"
-+		    ODBC_INCLUDE="-I$with_odbc/include"
-+		fi
-+	        AC_CHECK_LIB(pthread, pthread_create,
++        darwin*)
++                TARGET_FLAGS="-DUNIX"
++                AC_CHECK_LIB(pthread, pthread_create,
 +			    [AC_DEFINE(HAVE_LIBPTHREAD, 1, [Define if you have the pthread library (-lpthread).])
 +			     LIBS="$LIBS -lpthread"
 +			     have_pthread_lib=yes])
-+                AC_CHECK_LIB(iodbc, SQLAllocHandle, [ODBC_LIB="$ODBC_LIB -liodbc" odbc_lib_link_sucess=yes],
-+                         [], [$ODBC_LIB]);;
++                ODBC_LIB=-L"/usr/lib"
++                ODBC_INCLUDE="-I/usr/lib/include"
++	        AC_CHECK_LIB(iodbc, SQLAllocHandle,[ODBC_LIB="$ODBC_LIB -liodbc" odbc_lib_link_sucess=yes])
++            ;;
          win32|cygwin)
  		TARGET_FLAGS="-DWIN32"
  		AC_CHECK_LIB(ws2_32, main)
