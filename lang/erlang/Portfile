@@ -3,7 +3,7 @@
 PortSystem 1.0
 name		erlang
 version		R12B-2
-#revision	1
+revision	1
 categories	lang erlang
 maintainers	bfulgham@macports.org
 platforms	darwin
@@ -48,10 +48,18 @@ configure.args  --prefix=${destroot}${prefix}	\
 		--enable-hipe			\
 		--disable-smp-support           \
                 --with-ssl=${prefix}            \
-                --with-ssl-zlib=${prefix}
+                --with-ssl-zlib=${prefix}       
 
 variant smp	{
 	configure.args-delete	--disable-smp-support
+}
+
+variant nohipe	{
+	configure.args-delete	--enable-hipe
+}
+
+variant 64bit {
+        configure.args-append      --enable-darwin-64bit
 }
 
 variant gd      {
