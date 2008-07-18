@@ -2,8 +2,8 @@
 
 PortSystem 1.0
 name		erlang
-version		R12B-2
-revision	1
+version		R12B-3
+#revision	1
 categories	lang erlang
 maintainers	bfulgham@macports.org
 platforms	darwin
@@ -32,9 +32,18 @@ distfiles	otp_src_${version}${extract.suffix}		\
 		otp_doc_man_${version}${extract.suffix}		\
 		otp_doc_html_${version}${extract.suffix}
 
-checksums	otp_src_${version}.tar.gz      sha1 a38adf0498a6d0f5038899d9f4a8accc935e7ffd \
-		otp_doc_man_${version}.tar.gz  sha1 c32be18cc121412af97d948e1262a185206cadcb \
-		otp_doc_html_${version}.tar.gz sha1 9fbb1f8e514ab340fff437e794243b4d530ed682
+checksums           otp_src_R12B-3.tar.gz \
+                    md5     c2e7f0ad54b8fadebde2d94106608d97 \
+                    sha1    ea5f202cc35ed6ef2796727b95d62c9bbe6ad5e5 \
+                    rmd160  e7b5da985b939e51ef4e2d19fb96cff1781ce263 \
+                    otp_doc_man_R12B-3.tar.gz \
+                    md5     13098954c9d5804bb8394fe7badb3d0d \
+                    sha1    8ea4c9fa7d941c339c73bb417f88ee939d6989eb \
+                    rmd160  7e0c27391f42b1e58c7bb1472594e9fe6f7ac414 \
+                    otp_doc_html_R12B-3.tar.gz \
+                    md5     8865d406c256abbff63eaff62d2216aa \
+                    sha1    194003607113c84aef5b5daad7ca8b8901d1d80a \
+                    rmd160  8295d4e94952bad6458f2038415c474e687631cb
 
 extract.only	otp_src_${version}${extract.suffix}
 
@@ -45,17 +54,15 @@ patchfiles	patch-odbc
 configure.args  --prefix=${destroot}${prefix}	\
 		--enable-threads		\
                 --enable-kernel-poll            \
-		--enable-hipe			\
-		--disable-smp-support           \
                 --with-ssl=${prefix}            \
                 --with-ssl-zlib=${prefix}       
 
-variant smp	{
-	configure.args-delete	--disable-smp-support
-}
+configure.cflags {}
+configure.ldflags {}
+configure.cppflags {}
 
-variant nohipe	{
-	configure.args-delete	--enable-hipe
+variant hipe	{
+	configure.args-append	--enable-hipe
 }
 
 variant 64bit {
@@ -65,7 +72,7 @@ variant 64bit {
 variant gd      {
         configure.args-append      --with-gd=${prefix}
         depends_build-append       port:gd2
-        patchfiles-append          patch-percept
+#        patchfiles-append          patch-percept
 }
 
 variant gproc	{
@@ -85,7 +92,7 @@ post-destroot	{
         system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
 	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
 
-        set erts_dir   erts-5.6.2
+        set erts_dir   erts-5.6.3
 
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/erl
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/start
@@ -98,6 +105,11 @@ post-destroot	{
         file delete ${destroot}${prefix}/bin/erl
         file delete ${destroot}${prefix}/bin/erlc
         file delete ${destroot}${prefix}/bin/escript
+        file delete ${destroot}${prefix}/bin/epmd
+        file delete ${destroot}${prefix}/bin/run_erl
+        file delete ${destroot}${prefix}/bin/to_erl
+        file delete ${destroot}${prefix}/bin/typer
+        file delete ${destroot}${prefix}/lib/erlang/bin/epmd
 
         system "ln -s ../lib/erlang/bin/ear     ${destroot}${prefix}/bin/ear"
         system "ln -s ../lib/erlang/bin/ecc     ${destroot}${prefix}/bin/ecc"
@@ -105,10 +117,13 @@ post-destroot	{
         system "ln -s ../lib/erlang/bin/erl     ${destroot}${prefix}/bin/erl"
         system "ln -s ../lib/erlang/bin/erlc    ${destroot}${prefix}/bin/erlc"
         system "ln -s ../lib/erlang/bin/escript ${destroot}${prefix}/bin/escript"
+        system "ln -s ../${erts_dir}/bin/epmd   ${destroot}${prefix}/lib/erlang/bin/epmd"
+        system "ln -s ../${erts_dir}/bin/epmd   ${destroot}${prefix}/bin/epmd"
+        system "ln -s ../lib/erlang/bin/run_erl ${destroot}${prefix}/bin/run_erl"
+        system "ln -s ../lib/erlang/bin/to_erl  ${destroot}${prefix}/bin/to_erl"
+        system "ln -s ../lib/erlang/bin/typer   ${destroot}${prefix}/bin/typer"
 
-        file delete ${destroot}${prefix}/lib/erlang/bin/epmd
 
-        system "ln -s ../${erts_dir}/bin/epmd ${destroot}${prefix}/lib/erlang/bin/epmd"
 }
 
 #bugs: odbc
