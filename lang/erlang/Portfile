@@ -2,8 +2,8 @@
 
 PortSystem 1.0
 name		erlang
-version		R13A
-revision	1
+version		R13B
+revision	0
 categories	lang erlang
 maintainers	bfulgham@macports.org
 platforms	darwin
@@ -26,24 +26,24 @@ long_description	\
 		Ericsson ATM switch. 
 
 homepage	http://www.erlang.org/
-master_sites	http://www3.erlang.org/download/ http://www.erlang.org/download/
+master_sites	http://www3.erlang.org/download/snapshots/ http://www.erlang.org/download/snapshots/
 
 distfiles	otp_src_${version}${extract.suffix}		\
-		otp_doc_man_${version}${extract.suffix}		\
-		otp_doc_html_${version}${extract.suffix}
+		otp_man_${version}_2009-04-15_18${extract.suffix}		\
+		otp_html_${version}_2009-04-15_18${extract.suffix}
 
-checksums           otp_src_R13A.tar.gz \
-                    md5     76804ff9c18710184cf0c0230a0443fc \
-                    sha1    9fa0db27611559d697fe269c3fb9a405ae24d147 \
-                    rmd160  42ba3c4815fa702d19281f1d42faaec72a75c703 \
-                    otp_doc_man_R13A.tar.gz \
-                    md5     883e097796abd2cda4727fe3527dc1b6 \
-                    sha1    98ce2fbc2daf7ec88ca38334412b9e85ca9cd53c \
-                    rmd160  c082bda26b85cd6bd2ede8dd2c538e2ef50bbd2c \
-                    otp_doc_html_R13A.tar.gz \
-                    md5     2bbecc1c5537e0cd1c0fc406082b6c56 \
-                    sha1    fb3ed9c0d619d8bbd70af5c6b0e4e90c49771e0d \
-                    rmd160  873b30cd8c5f2617c62aba0314197c54097a27cf
+checksums           otp_src_R13B.tar.gz \
+                    md5     68495a1523a9e59d58748b8d7a5b2789 \
+                    sha1    271e580c4096bc5b06d747e34e668f8263da3405 \
+                    rmd160  8ee2079e61343d3bab7daba8ca4b0e60ba7e12ff \
+                    otp_man_R13B_2009-04-15_18.tar.gz \
+                    md5     2646abaa41e50694914e6dd7ead74672 \
+                    sha1    6a4bf43743e9dd25a9ce34310ed66ae45903b304 \
+                    rmd160  562c09bf7ef78216f9a6a83d99fda46addbe02e1 \
+                    otp_html_R13B_2009-04-15_18.tar.gz \
+                    md5     d3ce1e46a382ff0143c4179f79069f16 \
+                    sha1    70cfe78976f057a44b048ffeb861c7567fa34e9b \
+                    rmd160  0ffcc79994e493cfc8d17acbb5d18bf71f60cc80
 
 extract.only	otp_src_${version}${extract.suffix}
 
@@ -51,9 +51,7 @@ pre-patch	{ file rename ${workpath}/otp_src_${version} ${workpath}/${name}-${ver
 
 patchfiles      patch-lib_ssl_c_src_Makefile.dist \
                 patch-lib_ssl_c_src_Makefile.in \
-                patch-lib_ssl_c_src_esock_openssl.c \
-                patch-lib_wx_configure \
-                patch-lib_wx_configure.in
+                patch-lib_ssl_c_src_esock_openssl.c
 
 configure.args  --prefix=${destroot}${prefix}	\
 		--enable-threads		\
@@ -61,8 +59,8 @@ configure.args  --prefix=${destroot}${prefix}	\
                 --enable-smp-support            \
                 --enable-hipe                   \
                 --enable-dynamic-ssl-lib        \
-                --with-gd=${prefix} \
-                --with-ssl=/usr/lib \
+                --with-gd=${prefix}             \
+                --with-ssl=/usr/lib             \
                 --enable-dynamic-ssl-lib
 
 configure.cflags {}
@@ -72,15 +70,17 @@ configure.cppflags {}
 
 variant amd64 {
         configure.args-append      --enable-darwin-64bit
+        patchfiles-append          patch-lib_wx_configure \
+                                   patch-lib_wx_configure.in
 }
 
 depends_build	port:gawk port:gd2
 
 post-destroot	{
-        system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
-	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
+        system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_html_${version}_2009-04-15_18${extract.suffix}"
+	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_man_${version}_2009-04-15_18${extract.suffix}"
 
-        set erts_dir   erts-5.7
+        set erts_dir   erts-5.7.1
 
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/erl
         reinplace s|${destroot}|| ${destroot}${prefix}/lib/erlang/bin/start
