@@ -77,8 +77,8 @@ variant amd64 {
 depends_build	port:gawk port:gd2
 
 post-destroot	{
-        system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_html_${version}_2009-04-15_18${extract.suffix}"
-	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_man_${version}_2009-04-15_18${extract.suffix}"
+        system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_html_${version}${extract.suffix}"
+	system "tar -C ${destroot}${prefix}/lib/erlang -zxvf ${distpath}/otp_doc_man_${version}${extract.suffix}"
 
         set erts_dir   erts-5.7.1
 
