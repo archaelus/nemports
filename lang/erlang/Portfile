@@ -33,9 +33,9 @@ distfiles	otp_src_${version}${extract.suffix}		\
 		otp_doc_html_${version}${extract.suffix}
 
 checksums           otp_src_R13B.tar.gz \
-                    md5     68495a1523a9e59d58748b8d7a5b2789 \
-                    sha1    271e580c4096bc5b06d747e34e668f8263da3405 \
-                    rmd160  8ee2079e61343d3bab7daba8ca4b0e60ba7e12ff \
+                    md5     6d8c256468a198458b9f08ba6aa1a384 \
+                    sha1    a69611923c48861aef157e7b4a06689d339571ff \
+                    rmd160  625bf1b2c9051218dc6a4f3c89eaea50367fa112 \
                     otp_doc_man_R13B.tar.gz \
                     md5     9265ebf3b1041be6ae18e323b0933601 \
                     sha1    9a390f4e670db7b6596200031d4e0dbb6e96578d \
